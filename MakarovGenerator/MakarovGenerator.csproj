@@ -74,10 +74,13 @@
     </Compile>
     <Compile Include="HumDrum\Collections\Markov\Markov.cs" />
     <Compile Include="HumDrum\Collections\Markov\MarkovState.cs" />
+    <Compile Include="HumDrum\Collections\Groups.cs" />
+    <Compile Include="HumDrum\Collections\StateModifiers\IntegerCounter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="HumDrum\" />
     <Folder Include="HumDrum\Collections\Markov\" />
+    <Folder Include="HumDrum\Collections\StateModifiers\" />
   </ItemGroup>
 </Project>
