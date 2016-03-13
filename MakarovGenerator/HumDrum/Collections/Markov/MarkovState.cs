@@ -2,7 +2,7 @@
 
 namespace HumDrum.Collections.Markov
 {
-	public class MarkovState<T>
+	public class MarkovState<T> 
 	{
 		public T State { get; set; }
 		public Tuple<T, double> FutureState { get; set; }
@@ -18,7 +18,7 @@ namespace HumDrum.Collections.Markov
 			return FutureState.Item2;
 		}
 
-		public double FutureItem()
+		public T FutureItem()
 		{
 			return FutureState.Item1;
 		}

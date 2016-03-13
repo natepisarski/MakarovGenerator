@@ -1,0 +1,5 @@
+/home/nate/Code/MakarovGenerator/MakarovGenerator/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/nate/Code/MakarovGenerator/MakarovGenerator/bin/Debug/MakarovGenerator.exe.mdb
+/home/nate/Code/MakarovGenerator/MakarovGenerator/bin/Debug/MakarovGenerator.exe
+/home/nate/Code/MakarovGenerator/MakarovGenerator/obj/x86/Debug/MakarovGenerator.exe
+/home/nate/Code/MakarovGenerator/MakarovGenerator/obj/x86/Debug/MakarovGenerator.exe.mdb
