@@ -26,10 +26,15 @@ namespace MakarovGenerator
 			Console.WriteLine ();
 			Console.WriteLine ("Now let's see if we can't get elements in pairs of 2 from a big list");
 
-			foreach (List<int> y in Groups.Group (Transformations.Make(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), new IntegerCounter (6, 1))) {
+			foreach (List<int> y in Groups.Group<int> (Transformations.Make(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), new IntegerCounter (6, 1))) {
 				y.ForEach (w => Console.Write (w + " "));
 				Console.WriteLine ();
 			}
+
+			Console.WriteLine ("Oh wow, cool! Our stateobjects just kicked some butt.");
+			Console.WriteLine ("Why don't we fire up our Markov library and see if it's working as intended");
+			Markov<string> markov = new Markov<string> (Transformations.Make("here", "lies", "words", "here", "lies", "sounds", "here", "are", "things"), 1);
+			Console.WriteLine ("Based on state of \"lies\" of degree 1: " + markov.SelectRandom (Transformations.Make ("lies")));
 		}
 	}
 }
