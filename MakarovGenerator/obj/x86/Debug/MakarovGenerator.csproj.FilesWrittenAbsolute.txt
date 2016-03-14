@@ -3,3 +3,5 @@
 /home/nate/Code/MakarovGenerator/MakarovGenerator/bin/Debug/MakarovGenerator.exe
 /home/nate/Code/MakarovGenerator/MakarovGenerator/obj/x86/Debug/MakarovGenerator.exe
 /home/nate/Code/MakarovGenerator/MakarovGenerator/obj/x86/Debug/MakarovGenerator.exe.mdb
+/home/nate/Code/MakarovGenerator/MakarovGenerator/bin/Debug/HumDrum.dll
+/home/nate/Code/MakarovGenerator/MakarovGenerator/bin/Debug/HumDrum.dll.mdb
