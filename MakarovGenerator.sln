@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakarovGenerator", "MakarovGenerator\MakarovGenerator.csproj", "{C2A80805-FFB5-4D73-A85E-7946ABDB0B52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumDrum", "..\sb\HumDrum\HumDrum\HumDrum.csproj", "{715D15D4-68CB-4E55-B9C6-DCFE791C9B00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumDrum", "..\HumDrum\HumDrum\HumDrum.csproj", "{715D15D4-68CB-4E55-B9C6-DCFE791C9B00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,8 +19,5 @@ Global
 		{C2A80805-FFB5-4D73-A85E-7946ABDB0B52}.Debug|x86.Build.0 = Debug|x86
 		{C2A80805-FFB5-4D73-A85E-7946ABDB0B52}.Release|x86.ActiveCfg = Release|x86
 		{C2A80805-FFB5-4D73-A85E-7946ABDB0B52}.Release|x86.Build.0 = Release|x86
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = MakarovGenerator\MakarovGenerator.csproj
 	EndGlobalSection
 EndGlobal

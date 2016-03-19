@@ -37,10 +37,11 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MarkovServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\sb\HumDrum\HumDrum\HumDrum.csproj">
+    <ProjectReference Include="..\..\HumDrum\HumDrum\HumDrum.csproj">
       <Project>{715D15D4-68CB-4E55-B9C6-DCFE791C9B00}</Project>
       <Name>HumDrum</Name>
     </ProjectReference>
