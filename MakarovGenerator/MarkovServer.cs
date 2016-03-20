@@ -51,7 +51,7 @@ namespace MakarovGenerator
 		/// </summary>
 		public MarkovServer()
 		{
-
+			Chain = new Markov<string> (1);
 		}
 
 		/// <summary>

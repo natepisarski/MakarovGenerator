@@ -33,7 +33,18 @@ namespace MakarovGenerator
 		/// </summary>
 		public static void PrintHelp()
 		{
-			Console.WriteLine ("placeholder");
+			Console.WriteLine ("MakarovGenerator help: You can use any of the following commands\n");
+
+			Console.WriteLine ("To start the distributor on port 4206, do this: ");
+			Console.Write ("MakarovGenerator distributor DIRECTORY\n");
+			Console.WriteLine();
+
+			Console.WriteLine ("To ask the distributor to manage some text, do this: ");
+			Console.WriteLine ("MakarovGenerator client X |state| text1 text2 text3...");
+			Console.WriteLine ();
+
+			Console.WriteLine ("To ask MakarovGenerator to analyze a file, do this: ");
+			Console.WriteLine ("MakarovGenerator evaluate file X state");
 		}
 
 		/// <summary>
@@ -80,9 +91,9 @@ namespace MakarovGenerator
 			IEnumerable<string> chain;
 
 			if (args [1].Equals ("random"))
-				chain = serve.GetChain (int.Parse (args [1]));
+				chain = serve.GetChain (int.Parse (args [2]));
 			else
-				chain = serve.GetChain (TailHelper.Wrap(args [2]), int.Parse (args [1]));
+				chain = serve.GetChain (TailHelper.Wrap(args [3]), int.Parse (args [2]));
 
 			Console.WriteLine (Sections.RepairString (chain));
 		}
@@ -94,7 +105,8 @@ namespace MakarovGenerator
 		/// <param name="args">Arguments: "distributor rootDir"</param>
 		public static void MakeDistributor(string[] args)
 		{
-
+			DistributorWrapper dw = new DistributorWrapper (args [1], SERVER_PORT, CLIENT_PORT);
+			dw.Start ();
 		}
 
 		/// <summary>
@@ -104,9 +116,9 @@ namespace MakarovGenerator
 		/// <param name="args">Arguments: "client X |state| text1 text2 text3...</param>
 		public static void ClientSend(string[] args)
 		{
-			Servitor.Send (Sections.RepairString (args), "127.0.0.1", SERVER_PORT);
+			Servitor.Send (Sections.RepairString (args.Tail()), "127.0.0.1", SERVER_PORT);
 			TcpListener tcl = new TcpListener (IPAddress.Loopback, CLIENT_PORT);
-
+			tcl.Start ();
 			// Wait for the response
 			var server_response = tcl.AcceptTcpClient();
 			StreamReader reader = new StreamReader (server_response.GetStream ());

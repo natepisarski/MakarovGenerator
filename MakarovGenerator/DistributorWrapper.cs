@@ -14,10 +14,36 @@ namespace MakarovGenerator
 	/// </summary>
 	public class DistributorWrapper
 	{
+		/// <summary>
+		/// The distributor that this server will use to build chains.
+		/// </summary>
+		/// <value>The distributor</value>
 		MarkovDistributor Distributor {get; set;}
+
+		/// <summary>
+		/// A Servitor is used to buffer commands for this server to perform 
+		/// so that it can perform it on a request-by-request basis
+		/// </summary>
+		/// <value>The request log</value>
 		Servitor RequestLog { get; set; }
+
+		/// <summary>
+		/// The thread that the Servitor is running in
+		/// </summary>
+		/// <value>The servitor thread</value>
 		Thread ServitorThread {get; set;}
+
+		/// <summary>
+		/// Gets or sets the server port.
+		/// This is defined as a constant in the upper level of the program.
+		/// </summary>
+		/// <value>The server port.</value>
 		int ServerPort { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <value>The client port.</value>
 		int ClientPort {get; set;}
 
 		/// <summary>
@@ -35,6 +61,7 @@ namespace MakarovGenerator
 			ServerPort = serverPort;
 			ClientPort = clientPort;
 
+			Console.WriteLine ("[Wrapper]: Initialized properly. Servitor thread is about to initialize");
 			ServitorThread.Start ();
 		}
 
@@ -48,12 +75,30 @@ namespace MakarovGenerator
 				Thread.Sleep (1000);
 				if (RequestLog.Changed) {
 					foreach (string r in RequestLog.Collect()) {
+						Console.WriteLine ("[Wrapper]: Asked this: " + r);
 						// Requests are formatted like this: "Y |state| here is a lot of text that can go on for a long time"
 						// where Y is how many elements to get
+
+						// The items of the request
 						IEnumerable<string> items = Sections.ParseSections(r, '|');
-						var server = Distributor.Manage(Sections.RepairString(r.Split(' ').Tail()));
-						var values = server.GetChain (items.Get (1).Split(' '), int.Parse (items.Get (0)));
-						Servitor.Send (Sections.RepairString (values), "127.0.0.1", ClientPort);
+
+						// Requests a server by hashcode
+						var dirRequest = Sections.RepairString (r.Split (' ').Subsequence(2, r.Length()));
+
+						// The server watching over the directory that dirRequest wants
+						var server = Distributor.Manage (dirRequest);
+
+						// Information about what kind of chain to get
+						var desiredState = items.Get (1).Split (' ');
+						var desiredLength = int.Parse (items.Get (0));
+
+						// The chain returned from the correct server
+						var values = server.GetChain (desiredState, desiredLength);
+
+						// The repaired chain
+						var returnChain = Sections.RepairString (values);
+
+						Servitor.Send (returnChain, "127.0.0.1", ClientPort);
 					}
 				}
 			}
