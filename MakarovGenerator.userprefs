@@ -2,23 +2,25 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="MakarovGenerator/Program.cs">
     <Files>
-      <File FileName="MakarovGenerator/Program.cs" Line="23" Column="62" />
+      <File FileName="MakarovGenerator/Program.cs" Line="26" Column="25" />
       <File FileName="MakarovGenerator/HumDrum/Collections/Markov/Markov.cs" Line="1" Column="1" />
       <File FileName="MakarovGenerator/HumDrum/Collections/Markov/MarkovState.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/Collections/Transformations.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/Operations/ImageManager.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/Collections/Sections.cs" Line="1" Column="1" />
       <File FileName="MakarovGenerator/HumDrum/Collections/Groups.cs" Line="1" Column="1" />
       <File FileName="MakarovGenerator/HumDrum/Collections/StateModifiers/IntegerCounter.cs" Line="1" Column="1" />
       <File FileName="MakarovGenerator/HumDrum/Collections/Predicates.cs" Line="1" Column="1" />
       <File FileName="MakarovGenerator/HumDrum/Collections/Sections.cs" Line="1" Column="1" />
       <File FileName="MakarovGenerator/HumDrum/Collections/Transformations.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Markov/MarkovState.cs" Line="39" Column="36" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Markov/Markov.cs" Line="111" Column="68" />
-      <File FileName="MakarovGenerator/MarkovServer.cs" Line="54" Column="44" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/DirectorySearch.cs" Line="50" Column="4" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Sections.cs" Line="250" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Information.cs" Line="19" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Markov/MarkovState.cs" Line="1" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Markov/Markov.cs" Line="121" Column="1" />
+      <File FileName="MakarovGenerator/MarkovServer.cs" Line="55" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/DirectorySearch.cs" Line="51" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Sections.cs" Line="1" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Information.cs" Line="43" Column="1" />
+      <File FileName="MakarovGenerator/MarkovDistributor.cs" Line="119" Column="45" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/HigherOrder.cs" Line="38" Column="3" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/Line.cs" Line="1" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/ISequentialWriter.cs" Line="1" Column="1" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/NumericalWriter.cs" Line="45" Column="32" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

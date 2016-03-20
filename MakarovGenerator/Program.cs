@@ -19,9 +19,12 @@ namespace MakarovGenerator
 		// Must be called in the form of "makarov [directory] state"
 		public static void Main (string[] args)
 		{
-			MarkovServer server = new MarkovServer ("/home/nate/Code/TEST_DIRECTORY");
-			Console.WriteLine(Sections.RepairString(server.GetChain(50)));
-			
+			MarkovDistributor dist = new MarkovDistributor ("/home/nate/TEST_DIRECTORY");
+			dist.Manage ("here is some text is it too much for you to understand or is it okay?");
+			var x = dist.GetChain (Math.Abs("here is some text is it too much for you to understand or is it okay?".GetHashCode ()).ToString(), TailHelper.Wrap ("is"), 10);
+			foreach (string s in x) {
+				Console.WriteLine (s);
+			}
 		}
 	}
 }
