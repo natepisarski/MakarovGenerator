@@ -46,6 +46,15 @@ namespace MakarovGenerator
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MakarovGenerator.MarkovServer"/> class.
+		/// This is the constructor for adding specific files.
+		/// </summary>
+		public MarkovServer()
+		{
+
+		}
+
+		/// <summary>
 		/// Reload this instance.
 		/// </summary>
 		public void Reload()
