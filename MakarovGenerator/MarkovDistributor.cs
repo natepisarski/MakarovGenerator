@@ -41,12 +41,19 @@ namespace MakarovGenerator
 		/// </summary>
 		/// <returns><c>true</c> if this instance is controlling the specified directory; otherwise, <c>false</c>.</returns>
 		/// <param name="directory">The directory to test</param>
-		public bool IsControlled(string directory)
+		public bool IsDirectoryControlled(string directory)
 		{
-			foreach (MarkovServer s in Servers)
-				if (s.Directory.Equals (directory))
-					return true;
-			return false;
+			return Servers.Any (x => x.Directory.Equals (directory));
+		}
+
+		/// <summary>
+		/// Tests to see if the supplied source is being controlled.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is source controlled the specified source; otherwise, <c>false</c>.</returns>
+		/// <param name="source">The source of the text</param>
+		public bool IsSourceControlled(string source)
+		{
+			return Servers.Any(x => x.Source.Equals(source));
 		}
 
 		/// <summary>
@@ -54,35 +61,64 @@ namespace MakarovGenerator
 		/// current distributor.
 		/// </summary>
 		/// <param name="directory">The directory to add</param>
-		public void UnconditionalAdd(string directory)
+		public void UnconditionalAdd(string directory, string source)
 		{
-			Servers.Add (new MarkovServer (directory));
+			Servers.Add (new MarkovServer (directory, source));
 		}
 
 		/// <summary>
-		/// Add a directory to the distributor only if it's not 
-		/// already added.
+		/// Returns the Source of a file, given the directory.
 		/// </summary>
-		/// <param name="directory">The directory to add</param>
-		public void SafeAdd(string directory)
+		/// <returns>The source of some directory. If the proper Server isn't found, this is "".</returns>
+		/// <param name="source">The source for a directory</param>
+		public string SourceOf(string directory)
 		{
-			if (!IsControlled (directory))
-				UnconditionalAdd (directory);
+			return Servers.DoTo((x => x.Directory.Equals(directory)), (MarkovServer x) => {return x.Source;});
 		}
 
+		/// <summary>
+		/// Finds the directory
+		/// </summary>
+		/// <returns>The of.</returns>
+		/// <param name="source">Source.</param>
+		public string DirectoryOf(string source)
+		{
+			return Servers.DoTo ((x => x.Source.Equals (source)), (MarkovServer x) => {
+				return x.Directory;
+			});
+		}
+			
 		/// <summary>
 		/// Returns the server watching the current directory.
 		/// </summary>
 		/// <returns>The server watching the current directory</returns>
 		/// <param name="directory">The directory</param>
-		public MarkovServer GetServerWatching(string directory)
+		public MarkovServer GetServerWatchingDirectory(string directory)
 		{
-			if (IsControlled (directory)) {
+			if (IsDirectoryControlled (directory)) {
 				var serv = Servers.When (x => x.Directory.Equals (directory)).Get (0);
 				serv.Reload ();
 				return serv;
 			} else
-				UnconditionalAdd (directory);
+				UnconditionalAdd (directory, directory);
+			return Servers.Get (Servers.Length () - 1);
+		}
+
+		/// <summary>
+		/// Returns the server watching the given source
+		/// </summary>
+		/// <returns>The server watching source</returns>
+		/// <param name="source">The source of the text</param>
+		public MarkovServer GetServerWatchingSource(string source)
+		{
+			if (IsSourceControlled (source)) {
+				var serv = Servers.First (x => x.Source.Equals (source));
+				serv.Reload ();
+				return serv;
+			} else {
+				UnconditionalAdd (source, source);
+			}
+
 			return Servers.Get (Servers.Length () - 1);
 		}
 
@@ -95,7 +131,7 @@ namespace MakarovGenerator
 		/// <param name="elements">The number of elements to put into the chain</param>
 		public IEnumerable<string> GetChain(string directory, IEnumerable<string> seed, int elements)
 		{
-			return GetServerWatching (directory).GetChain (seed, elements);
+			return GetServerWatchingDirectory (directory).GetChain (seed, elements);
 		}
 
 		/// <summary>
@@ -114,18 +150,60 @@ namespace MakarovGenerator
 		/// If the directory already exists, it returns that MarkovServer.
 		/// </summary>
 		/// <param name="text">The text in question</param>
-		public MarkovServer Manage(string text)
+		public MarkovServer Manage(string source, string text)
 		{
-			var potentialName = Math.Abs(text.GetHashCode ()).ToString();
+			var potentialName = source;
 
-			if (!(IsControlled (potentialName)))
+			if (!(IsSourceControlled (potentialName)))
 			{
+				DirectorySearch ds = new DirectorySearch ("./", SearchOption.TopDirectoryOnly);
+
+				// Keeps changing the potential name until a file like it is not in the directory.
+				// i.e "name", "name0", "name01", "name012", etc
+				for(int i = 0; ds.Files.Contains(potentialName); i++)
+					potentialName += i;
+
 				Directory.CreateDirectory (potentialName);
 				GrowInto (potentialName, text);
-				SafeAdd (potentialName);
+				UnconditionalAdd (potentialName, source);
 			}
 
-			return GetServerWatching (potentialName);
+			return GetServerWatchingDirectory (potentialName);
+		}
+
+		/// <summary>
+		/// Manages a file, using the filename as the source name
+		/// </summary>
+		/// <returns>The markovserver</returns>
+		/// <param name="filename">The name of the file</param>
+		public MarkovServer ManageFile(string filename, string source)
+		{
+			string buffer = "";
+
+			foreach (string s in File.ReadAllLines(filename))
+				buffer += (s + " ");
+
+			return Manage (source, buffer);		
+		}
+
+		/// <summary>
+		/// Loads a directory into the Distributor
+		/// </summary>
+		/// <param name="directory">The directory to load</param>
+		public void Load(string directory)
+		{
+			Servers.Add (new MarkovServer (directory, directory));
+		}
+
+		/// <summary>
+		/// Loads every Directory into this MarkovDistributorn
+		/// </summary>
+		public void LoadAll()
+		{
+			DirectorySearch ds = new DirectorySearch (RootDirectory, SearchOption.TopDirectoryOnly);
+
+			foreach (string s in ds.Files)
+				Servers.Add (new MarkovServer (s, s)); // warAndPeace01 is the directory and source when loaded this way
 		}
 	}
 }

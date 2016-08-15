@@ -69,39 +69,81 @@ namespace MakarovGenerator
 		/// Start this DistributorWrapper, feeding the
 		/// Servitor's buffer into the MarkovDistributor.
 		/// </summary>
-		public void Start()
+		public async void Start()
 		{
 			for (;;) {
 				Thread.Sleep (1000);
 				if (RequestLog.Changed) {
-					foreach (string r in RequestLog.Collect()) {
+					foreach (string r in await RequestLog.Collect()) {
 						Console.WriteLine ("[Wrapper]: Asked this: " + r);
-						// Requests are formatted like this: "Y |state| here is a lot of text that can go on for a long time"
-						// where Y is how many elements to get
+
+						/*
+						 * Requests are formatted in a number of ways. Here are the possible ways for
+						 * them to be formatted:
+						 *		0				1				2				3
+						 *    source           text          the source           word2... etc
+						 *    source           file           filename
+						 *    chain            source		 some number		seed1, seed2... etc         
+						 * */
 
 						// The items of the request
 						IEnumerable<string> items = Sections.ParseSections(r, '|');
 
-						// Requests a server by hashcode
-						var dirRequest = Sections.RepairString (r.Split (' ').Subsequence(2, r.Length()));
+						// Either 'source' or 'chain'
+						switch (items.Get (0)) {
+						case "source":
+							switch (items.Get (1)) {
+							case "text":
+								SourceText (items.Get (2), Transformations.Subsequence (items, 3, items.Length ()));
+								break;
+							case "file":
+								SourceFile (items.Get (2), items.Get (2));
+								break;
+							}
+							break;
+						case "chain":
+							Chain (items.Get (1), int.Parse (items.Get (2)), items.Subsequence (3, items.Length()));
+							break;
+						}
 
-						// The server watching over the directory that dirRequest wants
-						var server = Distributor.Manage (dirRequest);
-
-						// Information about what kind of chain to get
-						var desiredState = items.Get (1).Split (' ');
-						var desiredLength = int.Parse (items.Get (0));
-
-						// The chain returned from the correct server
-						var values = server.GetChain (desiredState, desiredLength);
-
-						// The repaired chain
-						var returnChain = Sections.RepairString (values);
-
-						Servitor.Send (returnChain, "127.0.0.1", ClientPort);
+						Console.WriteLine ("Request processed");
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Analyzes some text, adding it to the source.
+		/// </summary>
+		/// <param name="source">The source to analyze</param>
+		/// <param name="words">The words to analyze</param>
+		public void SourceText(string source, IEnumerable<string> words)
+		{
+			Distributor.Manage (source, Sections.RepairString (words));
+
+			Servitor.Send ("Text successfully managed", "127.0.0.1", 4206);
+		}
+
+		/// <summary>
+		/// Learns by using a file
+		/// </summary>
+		/// <param name="source">The source name you would like to use</param>
+		/// <param name="filename">The name of the file</param>
+		public void SourceFile(string source, string filename)
+		{
+			Distributor.ManageFile (filename, source);
+
+			Servitor.Send ("File successfully managed", "127.0.0.1", 4206);
+		}
+
+		/// <summary>
+		/// Gets a Chain from the distributor
+		/// </summary>
+		/// <param name="source">The source directory to format from</param>
+		/// <param name="seed">The seed</param>
+		public void Chain(string source, int elements, IEnumerable<string> seed)
+		{
+			Distributor.GetChain (source, seed, elements);
 		}
 	}
 }

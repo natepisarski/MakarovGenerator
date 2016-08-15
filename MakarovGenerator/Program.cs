@@ -9,8 +9,6 @@ using HumDrum.Collections.Markov;
 using HumDrum.Collections.StateModifiers;
 using HumDrum.Collections;
 
-using HumDrum.Recursion;
-
 using HumDrum.Operations;
 
 namespace MakarovGenerator
@@ -40,11 +38,20 @@ namespace MakarovGenerator
 			Console.WriteLine();
 
 			Console.WriteLine ("To ask the distributor to manage some text, do this: ");
-			Console.WriteLine ("MakarovGenerator client X |state| text1 text2 text3...");
+			Console.WriteLine ("MakarovGenerator client source X text Y Z...., where X is where it came from, and the words follow \"text\"");
 			Console.WriteLine ();
 
-			Console.WriteLine ("To ask MakarovGenerator to analyze a file, do this: ");
-			Console.WriteLine ("MakarovGenerator evaluate file X state");
+			Console.WriteLine ("To ask the distributor to manager a file, do this: ");
+			Console.WriteLine ("MakarovGenerator client source X file Y");
+			Console.WriteLine ();
+
+			Console.WriteLine ("To ask the distributor to return a Markov chain, do this: ");
+			Console.WriteLine ("MakarovGenerator client chain source [X], where X is some number");
+			Console.WriteLine ();
+
+			Console.WriteLine ("You can also ask MakarovGenerator to evaluate a plain file with \"evaluate\"");
+			Console.WriteLine ("MakarovGenerator evaluate file [word / random] length");
+			Console.WriteLine ();
 		}
 
 		/// <summary>
@@ -54,8 +61,7 @@ namespace MakarovGenerator
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main (string[] args)
 		{
-			// To start off, there are three possible arguments.
-			// These are "evaluate", "distributor", and "client"
+			// Everything here is either for the distributor or the client
 
 			if (args.Length.Equals (0)) {
 				PrintHelp ();
@@ -93,7 +99,7 @@ namespace MakarovGenerator
 			if (args [1].Equals ("random"))
 				chain = serve.GetChain (int.Parse (args [2]));
 			else
-				chain = serve.GetChain (TailHelper.Wrap(args [3]), int.Parse (args [2]));
+				chain = serve.GetChain (Transformations.Wrap(args [3]), int.Parse (args [2]));
 
 			Console.WriteLine (Sections.RepairString (chain));
 		}
@@ -119,6 +125,7 @@ namespace MakarovGenerator
 			Servitor.Send (Sections.RepairString (args.Tail()), "127.0.0.1", SERVER_PORT);
 			TcpListener tcl = new TcpListener (IPAddress.Loopback, CLIENT_PORT);
 			tcl.Start ();
+
 			// Wait for the response
 			var server_response = tcl.AcceptTcpClient();
 			StreamReader reader = new StreamReader (server_response.GetStream ());
@@ -127,7 +134,6 @@ namespace MakarovGenerator
 				Console.WriteLine (line);
 			
 			server_response.Close ();
-
 		}
 	}
 }

@@ -1,25 +1,29 @@
 ﻿<Properties StartupItem="MakarovGenerator/MakarovGenerator.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="MakarovGenerator/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MakarovGenerator/DistributorWrapper.cs">
     <Files>
-      <File FileName="MakarovGenerator/Program.cs" Line="35" Column="4" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Markov/MarkovState.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Markov/Markov.cs" Line="55" Column="41" />
-      <File FileName="MakarovGenerator/MarkovServer.cs" Line="54" Column="33" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/DirectorySearch.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Sections.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Information.cs" Line="31" Column="1" />
-      <File FileName="MakarovGenerator/MarkovDistributor.cs" Line="129" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/HigherOrder.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/Line.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/ISequentialWriter.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Files/NumericalWriter.cs" Line="1" Column="1" />
-      <File FileName="MakarovGenerator/DistributorWrapper.cs" Line="99" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Servitor.cs" Line="80" Column="51" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Structures/BindingsTable.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/Logger.cs" Line="1" Column="1" />
-      <File FileName="../HumDrum/HumDrum/HumDrum/Operations/ImageManager.cs" Line="1" Column="1" />
+      <File FileName="MakarovGenerator/MarkovDistributor.cs" Line="203" Column="90" />
+      <File FileName="../HumDrum/HumDrum/HumDrum/Collections/Predicates.cs" Line="74" Column="110" />
+      <File FileName="MakarovGenerator/DistributorWrapper.cs" Line="151" Column="1" />
+      <File FileName="MakarovGenerator/Program.cs" Line="41" Column="41" />
+      <File FileName="MakarovGenerator/MarkovServer.cs" Line="63" Column="14" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="MakarovGenerator" expanded="True">
+            <Node name="HumDrum" expanded="True">
+              <Node name="HumDrum" expanded="True">
+                <Node name="Collections" expanded="True" />
+              </Node>
+            </Node>
+            <Node name="MakarovGenerator" expanded="True">
+              <Node name="DistributorWrapper.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

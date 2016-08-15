@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using HumDrum.Collections;
 using HumDrum.Collections.Markov;
 
-using HumDrum.Recursion;
-
 using HumDrum.Operations.Files;
 
 namespace MakarovGenerator
@@ -35,6 +33,12 @@ namespace MakarovGenerator
 		public string Directory { get; set;}
 
 		/// <summary>
+		/// The name of the source of the text (i.e, Wikipedia: George Washington)
+		/// </summary>
+		/// <value>The source of the text</value>
+		public string Source {get; set;}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MakarovGenerator.MarkovServer"/> class.
 		/// Will attempt to read all files in a given directory to build a Markov chain
 		/// </summary>
@@ -42,6 +46,20 @@ namespace MakarovGenerator
 		public MarkovServer (string directory)
 		{
 			Directory = directory;
+			Source = directory;
+			Reload ();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MakarovGenerator.MarkovServer"/> class.
+		/// This constructor allows you to name the source of the information.
+		/// </summary>
+		/// <param name="directory">The directory to learn from</param>
+		/// <param name="source">The name of the source where the technology came from</param>
+		public MarkovServer(string directory, string source)
+		{
+			Directory = directory;
+			Source = source;
 			Reload ();
 		}
 
