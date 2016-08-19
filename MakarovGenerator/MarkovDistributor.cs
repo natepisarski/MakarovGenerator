@@ -33,7 +33,9 @@ namespace MakarovGenerator
 		public MarkovDistributor (string root)
 		{
 			Servers = new List<MarkovServer> ();
-			RootDirectory = root;	
+			RootDirectory = root;
+
+			LoadAll ();
 		}
 
 		/// <summary>
@@ -43,7 +45,7 @@ namespace MakarovGenerator
 		/// <param name="directory">The directory to test</param>
 		public bool IsDirectoryControlled(string directory)
 		{
-			return Servers.Any (x => x.Directory.Equals (directory));
+			return Servers.Any (x => x.Directory.Contains (directory));
 		}
 
 		/// <summary>
@@ -64,6 +66,15 @@ namespace MakarovGenerator
 		public void UnconditionalAdd(string directory, string source)
 		{
 			Servers.Add (new MarkovServer (directory, source));
+		}
+
+		/// <summary>
+		/// Causes all of the servers to reload from their sources. Note: This may be exceedingly resource intensive to execute
+		/// </summary>
+		public void ReloadAll()
+		{
+			foreach (MarkovServer s in Servers)
+				s.Reload ();
 		}
 
 		/// <summary>
@@ -96,7 +107,7 @@ namespace MakarovGenerator
 		public MarkovServer GetServerWatchingDirectory(string directory)
 		{
 			if (IsDirectoryControlled (directory)) {
-				var serv = Servers.When (x => x.Directory.Equals (directory)).Get (0);
+				var serv = Servers.When (x => x.Directory.Contains (directory)).Get (0);
 				serv.Reload ();
 				return serv;
 			} else
@@ -117,6 +128,7 @@ namespace MakarovGenerator
 				return serv;
 			} else {
 				UnconditionalAdd (source, source);
+				ReloadAll ();
 			}
 
 			return Servers.Get (Servers.Length () - 1);
@@ -152,11 +164,11 @@ namespace MakarovGenerator
 		/// <param name="text">The text in question</param>
 		public MarkovServer Manage(string source, string text)
 		{
-			var potentialName = source;
+			var potentialName = RootDirectory + "/" + source;
 
 			if (!(IsSourceControlled (potentialName)))
 			{
-				DirectorySearch ds = new DirectorySearch ("./", SearchOption.TopDirectoryOnly);
+				DirectorySearch ds = new DirectorySearch (RootDirectory, SearchOption.TopDirectoryOnly);
 
 				// Keeps changing the potential name until a file like it is not in the directory.
 				// i.e "name", "name0", "name01", "name012", etc
@@ -202,7 +214,7 @@ namespace MakarovGenerator
 		{
 			DirectorySearch ds = new DirectorySearch (RootDirectory, SearchOption.TopDirectoryOnly);
 
-			foreach (string s in ds.Files)
+			foreach (string s in ds.Directories)
 				Servers.Add (new MarkovServer (s, s)); // warAndPeace01 is the directory and source when loaded this way
 		}
 	}

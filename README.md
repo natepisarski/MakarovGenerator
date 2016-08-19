@@ -1,4 +1,4 @@
-# MakarovGenerator
+# Generator
 Welcome to MakarovGenerator, the statistical analysis tool for Markov Chains. In short, a Markov chain says that the future state depends only on the current and previous states. What does this mean exactly? It means that in this sentence:
 
     I am an example sentence. I am a good example sentence.
@@ -26,7 +26,7 @@ This is to save space. If you give it the same text twice in a row, it won't hav
 
 
 # Current Status
-It's worked a couple times, but it sure is clunky and extraordinarily easy to break.
+The project works, but nearly no bug hunting has been done to it. It's likely extremely buggy. That said, it does provide a working implementation of Markov chains, so be sure to check it out if it interests you! This September (2016) it will be used in a web service and will likely become stable by then
 
 # Project TODO
 

@@ -23,7 +23,7 @@ namespace MakarovGenerator
 		/// <summary>
 		/// The default port for the client to listen to
 		/// </summary>
-		public const int CLIENT_PORT = 4207;
+		public const int CLIENT_PORT = 4205;
 
 		/// <summary>
 		/// If the user enters command line arguments that don't 
@@ -101,7 +101,10 @@ namespace MakarovGenerator
 			else
 				chain = serve.GetChain (Transformations.Wrap(args [3]), int.Parse (args [2]));
 
-			Console.WriteLine (Sections.RepairString (chain));
+			foreach (string word in chain)
+				Console.Write (word + " ");
+
+			Console.WriteLine ();
 		}
 
 		/// <summary>
@@ -122,18 +125,23 @@ namespace MakarovGenerator
 		/// <param name="args">Arguments: "client X |state| text1 text2 text3...</param>
 		public static void ClientSend(string[] args)
 		{
-			Servitor.Send (Sections.RepairString (args.Tail()), "127.0.0.1", SERVER_PORT);
-			TcpListener tcl = new TcpListener (IPAddress.Loopback, CLIENT_PORT);
-			tcl.Start ();
+			string argLine = "";
 
-			// Wait for the response
-			var server_response = tcl.AcceptTcpClient();
-			StreamReader reader = new StreamReader (server_response.GetStream ());
-
-			for (string line = ""; (line = reader.ReadLine ()) != null;)
-				Console.WriteLine (line);
+			foreach (string word in args.Tail())
+				argLine += (word + " ");
 			
-			server_response.Close ();
+			Servitor.Send (argLine, "127.0.0.1", SERVER_PORT);
+
+			Console.WriteLine ("Request sent. The listening server is initializing on port 4205");
+			/* Start the listening server */
+			TcpListener tcpl = new TcpListener (CLIENT_PORT);
+			tcpl.Start ();
+
+			TcpClient client = tcpl.AcceptTcpClient ();
+
+			Console.WriteLine (Servitor.LineFromClient (client));
+			client.Close ();
+			tcpl.Stop ();
 		}
 	}
 }

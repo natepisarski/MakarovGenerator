@@ -1,5 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Net;
+using System.Net.Sockets;
+
 using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Generic;
@@ -18,20 +22,20 @@ namespace MakarovGenerator
 		/// The distributor that this server will use to build chains.
 		/// </summary>
 		/// <value>The distributor</value>
-		MarkovDistributor Distributor {get; set;}
+		MarkovDistributor Distributor { get; set; }
 
 		/// <summary>
 		/// A Servitor is used to buffer commands for this server to perform 
 		/// so that it can perform it on a request-by-request basis
 		/// </summary>
 		/// <value>The request log</value>
-		Servitor RequestLog { get; set; }
+		//Servitor RequestLog { get; set; }
 
 		/// <summary>
 		/// The thread that the Servitor is running in
 		/// </summary>
 		/// <value>The servitor thread</value>
-		Thread ServitorThread {get; set;}
+		//Thread ServitorThread {get; set;}
 
 		/// <summary>
 		/// Gets or sets the server port.
@@ -44,7 +48,7 @@ namespace MakarovGenerator
 		/// 
 		/// </summary>
 		/// <value>The client port.</value>
-		int ClientPort {get; set;}
+		int ClientPort { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MakarovGenerator.DistributorWrapper"/> class.
@@ -54,30 +58,52 @@ namespace MakarovGenerator
 		{
 			Distributor = new MarkovDistributor (rootDirectory);
 
-			RequestLog = new Servitor (IPAddress.Loopback, serverPort);
+			// These two lines are blocked out because we're manually doing Networking stuff in the infinite loop.
+			// This is so we can communicate with the client easier.
 
-			ServitorThread = new Thread (new ThreadStart (RequestLog.Start));
+			// RequestLog = new Servitor (IPAddress.Loopback, serverPort);
+
+			// ServitorThread = new Thread (new ThreadStart (RequestLog.Start));
 
 			ServerPort = serverPort;
 			ClientPort = clientPort;
 
 			Console.WriteLine ("[Wrapper]: Initialized properly. Servitor thread is about to initialize");
-			ServitorThread.Start ();
+			// ServitorThread.Start (); We no longer need a servitor thread
 		}
 
 		/// <summary>
 		/// Start this DistributorWrapper, feeding the
 		/// Servitor's buffer into the MarkovDistributor.
 		/// </summary>
-		public async void Start()
+		public async void Start ()
 		{
+			TcpListener listener = new TcpListener (ServerPort);
+			listener.Start ();
+
 			for (;;) {
 				Thread.Sleep (1000);
-				if (RequestLog.Changed) {
-					foreach (string r in await RequestLog.Collect()) {
-						Console.WriteLine ("[Wrapper]: Asked this: " + r);
 
-						/*
+				// Something is connecting
+				TcpClient client = listener.AcceptTcpClient ();
+
+				// Make a stream of it so we can IO with it
+				NetworkStream nwStream = client.GetStream ();
+
+				// Make an array equal to the message size
+				var buffer = new byte[client.ReceiveBufferSize];
+
+				// NetworkStream.Read returns the size of the message
+				int bytesRead = nwStream.Read (buffer, 0, client.ReceiveBufferSize);
+
+				// Convert this buffer to a string so we can work with it
+				string dataReceived = Encoding.ASCII.GetString (buffer, 0, bytesRead);
+
+				string r = dataReceived;
+
+				Console.WriteLine ("[Wrapper]: Asked this: " + r);
+
+				/*
 						 * Requests are formatted in a number of ways. Here are the possible ways for
 						 * them to be formatted:
 						 *		0				1				2				3
@@ -86,29 +112,31 @@ namespace MakarovGenerator
 						 *    chain            source		 some number		seed1, seed2... etc         
 						 * */
 
-						// The items of the request
-						IEnumerable<string> items = Sections.ParseSections(r, '|');
+				// The items of the request
+				IEnumerable<string> items = Sections.ParseSections (r, '|');
 
-						// Either 'source' or 'chain'
-						switch (items.Get (0)) {
-						case "source":
-							switch (items.Get (1)) {
-							case "text":
-								SourceText (items.Get (2), Transformations.Subsequence (items, 3, items.Length ()));
-								break;
-							case "file":
-								SourceFile (items.Get (2), items.Get (2));
-								break;
-							}
-							break;
-						case "chain":
-							Chain (items.Get (1), int.Parse (items.Get (2)), items.Subsequence (3, items.Length()));
-							break;
-						}
-
-						Console.WriteLine ("Request processed");
+				// Either 'source' or 'chain'
+				switch (items.Get (0)) {
+				case "source":
+					switch (items.Get (1)) {
+					case "text":
+						SourceText (items.Get (2), Transformations.Subsequence (items, 3, items.Length ()));
+						break;
+					case "file":
+						SourceFile (items.Get (2), items.Get (2));
+						break;
 					}
+					break;
+				case "chain":
+					Chain (items.Get (1), int.Parse (items.Get (2)), items.Subsequence (3, items.Length ()));
+					break;
 				}
+
+				// Clean up Network code
+				nwStream.Close ();
+				client.Close ();
+
+				Console.WriteLine ("Request processed");
 			}
 		}
 
@@ -117,11 +145,16 @@ namespace MakarovGenerator
 		/// </summary>
 		/// <param name="source">The source to analyze</param>
 		/// <param name="words">The words to analyze</param>
-		public void SourceText(string source, IEnumerable<string> words)
+		public void SourceText (string source, IEnumerable<string> words)
 		{
-			Distributor.Manage (source, Sections.RepairString (words));
+			string wordLine = "";
 
-			Servitor.Send ("Text successfully managed", "127.0.0.1", 4206);
+			foreach (string word in words) // TODO: Replace with "RepairWith" function
+				wordLine += (word + " ");
+					
+			Distributor.Manage (source, wordLine);
+
+
 		}
 
 		/// <summary>
@@ -129,7 +162,7 @@ namespace MakarovGenerator
 		/// </summary>
 		/// <param name="source">The source name you would like to use</param>
 		/// <param name="filename">The name of the file</param>
-		public void SourceFile(string source, string filename)
+		public void SourceFile (string source, string filename)
 		{
 			Distributor.ManageFile (filename, source);
 
@@ -141,9 +174,12 @@ namespace MakarovGenerator
 		/// </summary>
 		/// <param name="source">The source directory to format from</param>
 		/// <param name="seed">The seed</param>
-		public void Chain(string source, int elements, IEnumerable<string> seed)
+		public void Chain (string source, int elements, IEnumerable<string> seed)
 		{
-			Distributor.GetChain (source, seed, elements);
+			string chain = Sections.RepairStringWith (Distributor.GetChain (source, seed, 5), " ");
+			Console.WriteLine ("[Generated chain]: " + chain);
+
+			Servitor.Send (Sections.RepairStringWith (Distributor.GetChain (source, seed, elements), " "), "127.0.0.1", 4205);
 		}
 	}
 }
