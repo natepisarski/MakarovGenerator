@@ -1,42 +1,42 @@
 # Generator
-Welcome to MakarovGenerator, the statistical analysis tool for Markov Chains. In short, a Markov chain says that the future state depends only on the current and previous states. What does this mean exactly? It means that in this sentence:
+Welcome to MakarovGenerator, a tool for generating (somewhat) coherent text using [markov chains](https://en.wikipedia.org/wiki/Markov_chain). The quality of the generated text won't be as good as something like GPT, but it will still be better than a monkeys-on-a-typewriter approach.
+
+In short, a Markov chain says that the future state depends only on the current and previous states. So, in this sentence:
 
     I am an example sentence. I am a good example sentence.
 
-The probability that "I" is followed by "am" is 100%, but the probability that "am" is proceeded by "an" is only 50%. This probability is run through a random number generator to create chains of probabilistic state.
+The probability that "I" is followed by "am" is 100%, but the probability that "am" is proceeded by "an" is only 50%. This probability is run through a random number generator to create state chains.
 
 ## Why?
-This lets us do some obviously cool things. It lets us generate sentences that seem life like. This can be used - testing data, data mining, text prediction (think: autocorrect), or abused - human-like bots, spam, etc.
+This lets us do neat things. We can train it on particular data sets to get different kind of data out. We can use it to generate testing data for text processing. We can create bots (which is how SubredditSimulator on Reddit works), the list goes on!
 
 # How does this program work?
-This program is a bit complex if you just want something to evaluate / have fun with Markov Chains. The simplest way to use the program for that purpose is to do this:
+The calling convention is a little complicated, but the easiest way is to do this from a command-line:
 
     MakarovGenerator.exe evaluate filename 5 in
 
 which will evaluate a Markov chain 5 elements long from filename.
 
-It can also be used as a server with automatic memory-saving checking.
+It can also be used as a lightweight server:
 
 
     MakarovGenerator distributor rootDirectory
 
-will begin MakarovGenerator in distributor mode. This means that it will look over rootDirectory and listen for commands. The commands are sent from the client (same executable). They contain the state you want to start with, how long of a chain you want to generate, etc. The text you give it is hashed and placed into 0.txt in the directory it's hashed to.... wow, wait, wut?
+The server will begin listening for commands. The commands are sent from the client (same executable). They contain the state you want to start with, how long of a chain you want to generate, etc.
 
-This is to save space. If you give it the same text twice in a row, it won't have to download all of it again. This has web service in mind.
-
+The server has automatic caching, so hashed text files will appear in the directory - this is normal!
 
 # Current Status
-The project works, but nearly no bug hunting has been done to it. It's likely extremely buggy. That said, it does provide a working implementation of Markov chains, so be sure to check it out if it interests you! This September (2016) it will be used in a web service and will likely become stable by then
+The project works, as in - it has worked at least once. Not much extra development ever happened to it, so ancient bugs are probably still lurking inside it. That said, it really is a fully-featured markov chain implementation.
 
 # Project TODO
+These are some things I wanted to do, which I just never got around to:
 
 * TODO: Let Markov chains dynamically add new elements (Markov.cs - HumDrum)
 * TODO: Let MarkovServer / MarkovDistributor generate random chains (MarkovDistributor.cs)
 * TODO: Add checking to see if dynamic additions need to happen and do it if they do
 * TODO: Make it not break over improperly formatted stuff
 * TODO: Add formatting to the sentences generated
-
-
 
 # License
 BSD 3-clause
